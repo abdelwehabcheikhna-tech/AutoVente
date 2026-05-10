@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+
+<div class="container">
+  <div class="row justify-content-center mt-4 mb-4">
+    <div class="col-md-6">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-header bg-gradient text-white text-center rounded-4 rounded-bottom-0"
+             style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+          <h3 class="mb-0"><i class="fas fa-user-plus"></i> Inscription</h3>
+          <p class="mb-0">Créez votre compte gratuitement</p>
+        </div>
+        <div class="card-body p-4">
+          <form th:action="@{/register}" th:object="${user}" method="post">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Nom</label>
+                <input type="text" th:field="*{nom}" class="form-control rounded-pill" required>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label fw-semibold">Prénom</label>
+                <input type="text" th:field="*{prenom}" class="form-control rounded-pill" required>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="fas fa-envelope"></i> Email</label>
+              <input type="email" th:field="*{email}" class="form-control rounded-pill" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="fas fa-user"></i> Nom d'utilisateur</label>
+              <input type="text" th:field="*{username}" class="form-control rounded-pill" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="fas fa-lock"></i> Mot de passe</label>
+              <input type="password" th:field="*{password}" class="form-control rounded-pill" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold"><i class="fas fa-phone"></i> Téléphone</label>
+              <input type="tel" th:field="*{telephone}" class="form-control rounded-pill">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Je suis</label>
+              <select th:field="*{role}" class="form-select rounded-pill">
+                <option value="ACHETEUR">Acheteur</option>
+                <option value="VENDEUR">Vendeur</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2">
+              <i class="fas fa-check-circle"></i> S'inscrire
+            </button>
+          </form>
+
+          <hr class="my-4">
+
+          <div class="text-center">
+            <p>Déjà inscrit ? <a th:href="@{/login}" class="text-decoration-none">Se connecter</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="fragments/scripts :: scripts"></div>
+</body>
+</html>

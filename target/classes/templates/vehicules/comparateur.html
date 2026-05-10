@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head"></head>
+<body>
+
+<div th:replace="fragments/navigation :: navigation"></div>
+
+<div class="container mt-4 mb-5">
+  <div class="hero-section" style="padding: 30px 0;">
+    <div class="container text-center">
+      <h2 class="fw-bold"><i class="fas fa-chart-line"></i> Comparateur de véhicules</h2>
+      <p>Comparez deux véhicules côte à côte et trouvez le meilleur choix</p>
+    </div>
+  </div>
+
+  <!-- Formulaire de comparaison -->
+  <div class="row justify-content-center mb-5">
+    <div class="col-md-10">
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
+          <form th:action="@{/comparateur}" method="post" class="row g-4">
+            <div class="col-md-5">
+              <label class="form-label fw-semibold">
+                <i class="fas fa-car text-primary"></i> Premier véhicule
+              </label>
+              <select name="vehicule1Id" class="form-select form-select-lg rounded-pill" required>
+                <option value="">-- Sélectionnez un véhicule --</option>
+                <option th:each="a : ${annonces}" th:value="${a.id}"
+                        th:text="${a.titre} + ' - ' + ${a.prix} + ' MRU'"></option>
+              </select>
+            </div>
+            <div class="col-md-2 text-center">
+              <div class="mt-4">
+                <i class="fas fa-exchange-alt fa-3x text-primary"></i>
+              </div>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label fw-semibold">
+                <i class="fas fa-car text-success"></i> Deuxième véhicule
+              </label>
+              <select name="vehicule2Id" class="form-select form-select-lg rounded-pill" required>
+                <option value="">-- Sélectionnez un véhicule --</option>
+                <option th:each="a : ${annonces}" th:value="${a.id}"
+                        th:text="${a.titre} + ' - ' + ${a.prix} + ' MRU'"></option>
+              </select>
+            </div>
+            <div class="col-12 text-center">
+              <button type="submit" class="btn btn-gradient rounded-pill px-5 py-2">
+                <i class="fas fa-chart-line"></i> Comparer
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Résultats de comparaison -->
+  <div th:if="${annonce1 != null and annonce2 != null}">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+      <div class="card-header bg-gradient text-white text-center py-3">
+        <h4 class="mb-0"><i class="fas fa-balance-scale"></i> Comparaison détaillée</h4>
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-bordered mb-0">
+          <thead class="table-light">
+          <tr class="text-center">
+            <th style="width: 30%">Critères</th>
+            <th style="width: 35%" class="bg-primary bg-opacity-10">
+              <i class="fas fa-car"></i>
+              <span th:text="${annonce1.titre}">Véhicule 1</span>
+            </th>
+            <th style="width: 35%" class="bg-success bg-opacity-10">
+              <i class="fas fa-car"></i>
+              <span th:text="${annonce2.titre}">Véhicule 2</span>
+            </th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr>
+            <td class="fw-semibold bg-light">Prix</td>
+            <td class="text-center">
+              <span class="badge bg-primary fs-6" th:text="${#numbers.formatDecimal(annonce1.prix, 0, 0)} + ' MRU'"></span>
+            </td>
+            <td class="text-center">
+              <span class="badge bg-success fs-6" th:text="${#numbers.formatDecimal(annonce2.prix, 0, 0)} + ' MRU'"></span>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Marque / Modèle</td>
+            <td class="text-center" th:text="${annonce1.vehicule.marque.nom} + ' ' + ${annonce1.vehicule.modele.nom}">Marque Modèle</td>
+            <td class="text-center" th:text="${annonce2.vehicule.marque.nom} + ' ' + ${annonce2.vehicule.modele.nom}">Marque Modèle</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Année</td>
+            <td class="text-center">
+                                <span th:class="${annonce1.vehicule.annee > annonce2.vehicule.annee} ? 'text-success fw-bold' : ''"
+                                      th:text="${annonce1.vehicule.annee}">2020</span>
+              <i th:if="${annonce1.vehicule.annee > annonce2.vehicule.annee}" class="fas fa-arrow-up text-success ms-2"></i>
+            </td>
+            <td class="text-center">
+                                <span th:class="${annonce2.vehicule.annee > annonce1.vehicule.annee} ? 'text-success fw-bold' : ''"
+                                      th:text="${annonce2.vehicule.annee}">2020</span>
+              <i th:if="${annonce2.vehicule.annee > annonce1.vehicule.annee}" class="fas fa-arrow-up text-success ms-2"></i>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Kilométrage</td>
+            <td class="text-center">
+                                <span th:class="${annonce1.vehicule.kilometrage < annonce2.vehicule.kilometrage} ? 'text-success fw-bold' : ''"
+                                      th:text="${#numbers.formatDecimal(annonce1.vehicule.kilometrage, 0, 0)} + ' km'"></span>
+              <i th:if="${annonce1.vehicule.kilometrage < annonce2.vehicule.kilometrage}" class="fas fa-arrow-down text-success ms-2"></i>
+            </td>
+            <td class="text-center">
+                                <span th:class="${annonce2.vehicule.kilometrage < annonce1.vehicule.kilometrage} ? 'text-success fw-bold' : ''"
+                                      th:text="${#numbers.formatDecimal(annonce2.vehicule.kilometrage, 0, 0)} + ' km'"></span>
+              <i th:if="${annonce2.vehicule.kilometrage < annonce1.vehicule.kilometrage}" class="fas fa-arrow-down text-success ms-2"></i>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Carburant</td>
+            <td class="text-center">
+              <span class="badge bg-info" th:text="${annonce1.vehicule.carburant}">Essence</span>
+            </td>
+            <td class="text-center">
+              <span class="badge bg-info" th:text="${annonce2.vehicule.carburant}">Essence</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Transmission</td>
+            <td class="text-center" th:text="${annonce1.vehicule.transmission}">Manuelle</td>
+            <td class="text-center" th:text="${annonce2.vehicule.transmission}">Manuelle</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Puissance</td>
+            <td class="text-center">
+              <span th:if="${annonce1.vehicule.puissance != null}" th:text="${annonce1.vehicule.puissance} + ' CH'">120 CH</span>
+              <span th:unless="${annonce1.vehicule.puissance != null}">-</span>
+            </td>
+            <td class="text-center">
+              <span th:if="${annonce2.vehicule.puissance != null}" th:text="${annonce2.vehicule.puissance} + ' CH'">120 CH</span>
+              <span th:unless="${annonce2.vehicule.puissance != null}">-</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Couleur</td>
+            <td class="text-center" th:text="${annonce1.vehicule.couleur ?: '-'}">Rouge</td>
+            <td class="text-center" th:text="${annonce2.vehicule.couleur ?: '-'}">Bleu</td>
+          </tr>
+          <tr>
+            <td class="fw-semibold bg-light">Date de publication</td>
+            <td class="text-center" th:text="${#dates.format(annonce1.dateCreation, 'dd/MM/yyyy')}">01/01/2025</td>
+            <td class="text-center" th:text="${#dates.format(annonce2.dateCreation, 'dd/MM/yyyy')}">01/01/2025</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer bg-gradient text-white text-center py-3">
+        <div class="row">
+          <div class="col-md-4">
+            <i class="fas fa-trophy"></i>
+            <span th:if="${annonce1.prix < annonce2.prix}" class="fw-bold">Véhicule 1 moins cher</span>
+            <span th:unless="${annonce1.prix < annonce2.prix}" class="fw-bold">Véhicule 2 moins cher</span>
+          </div>
+          <div class="col-md-4">
+            <i class="fas fa-tachometer-alt"></i>
+            <span th:if="${annonce1.vehicule.kilometrage < annonce2.vehicule.kilometrage}" class="fw-bold">Véhicule 1 moins kilométré</span>
+            <span th:unless="${annonce1.vehicule.kilometrage < annonce2.vehicule.kilometrage}" class="fw-bold">Véhicule 2 moins kilométré</span>
+          </div>
+          <div class="col-md-4">
+            <i class="fas fa-calendar-alt"></i>
+            <span th:if="${annonce1.vehicule.annee > annonce2.vehicule.annee}" class="fw-bold">Véhicule 1 plus récent</span>
+            <span th:unless="${annonce1.vehicule.annee > annonce2.vehicule.annee}" class="fw-bold">Véhicule 2 plus récent</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="text-center mt-4">
+      <a th:href="@{/comparateur}" class="btn btn-outline-secondary rounded-pill px-4 me-2">
+        <i class="fas fa-redo-alt"></i> Nouvelle comparaison
+      </a>
+      <a th:href="@{/annonces}" class="btn btn-gradient rounded-pill px-4">
+        <i class="fas fa-search"></i> Voir plus d'annonces
+      </a>
+    </div>
+  </div>
+
+  <!-- Message si aucun résultat -->
+  <div th:if="${annonce1 == null or annonce2 == null}" class="alert alert-info text-center mt-4">
+    <i class="fas fa-info-circle"></i> Sélectionnez deux véhicules pour les comparer côte à côte
+  </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="fragments/scripts :: scripts"></div>
+
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}" ></head>
+<body>
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-header bg-gradient text-white text-center rounded-4 rounded-bottom-0"
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h3 class="mb-0"><i class="fas fa-car"></i> AutoVente</h3>
+                    <p class="mb-0">Connectez-vous à votre compte</p>
+                </div>
+                <div class="card-body p-4">
+                    <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-triangle"></i> Identifiants invalides
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show">
+                        <i class="fas fa-check-circle"></i> Déconnexion réussie
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+
+                    <form th:action="@{/login}" method="post">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold"><i class="fas fa-envelope"></i> Email</label>
+                            <input type="email" name="username" class="form-control rounded-pill"
+                                   placeholder="exemple@email.com" required autofocus>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold"><i class="fas fa-lock"></i> Mot de passe</label>
+                            <input type="password" name="password" class="form-control rounded-pill"
+                                   placeholder="••••••" required>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="remember" name="remember-me">
+                            <label class="form-check-label" for="remember">Se souvenir de moi</label>
+                        </div>
+                        <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2">
+                            <i class="fas fa-sign-in-alt"></i> Connexion
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p>Pas encore de compte ? <a th:href="@{/register}" class="text-decoration-none">Inscrivez-vous</a></p>
+                        <small class="text-muted">Compte Admin: admin@autovente.com / admin123</small><br>
+                        <small class="text-muted">Compte Vendeur: vendeur@autovente.com / vendeur123</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+</body>
+</html>

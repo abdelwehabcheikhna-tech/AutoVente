@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<div th:fragment="navigation">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <div class="container">
+      <a class="navbar-brand fw-bold fs-4" th:href="@{/}">
+        <i class="fas fa-car"></i> AutoVente
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/}">
+              <i class="fas fa-home"></i> Accueil
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/annonces}">
+              <i class="fas fa-list"></i> Annonces
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/comparateur}">
+              <i class="fas fa-chart-line"></i> Comparateur
+            </a>
+          </li>
+          <li class="nav-item" sec:authorize="hasRole('VENDEUR')">
+            <a class="nav-link" th:href="@{/annonces/nouvelle}">
+              <i class="fas fa-plus-circle"></i> Déposer une annonce
+            </a>
+          </li>
+          <li class="nav-item" sec:authorize="hasRole('VENDEUR')">
+            <a class="nav-link" th:href="@{/annonces/mes-annonces}">
+              <i class="fas fa-store"></i> Mes annonces
+            </a>
+          </li>
+          <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+            <a class="nav-link" th:href="@{/admin}">
+              <i class="fas fa-tools"></i> Admin
+            </a>
+          </li>
+          <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-circle"></i> <span sec:authentication="name"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" th:href="@{/profil}">
+                <i class="fas fa-id-card"></i> Mon profil
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" th:href="@{/logout}">
+                <i class="fas fa-sign-out-alt"></i> Déconnexion
+              </a></li>
+            </ul>
+          </li>
+          <li class="nav-item" sec:authorize="isAnonymous()">
+            <a class="nav-link btn btn-outline-light rounded-pill px-3" th:href="@{/login}">
+              <i class="fas fa-sign-in-alt"></i> Connexion
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</div>
+</html>

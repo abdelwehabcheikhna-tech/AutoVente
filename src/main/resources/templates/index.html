@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head  th:replace="~{fragments/head :: head}"></head>
+<body>
+
+<div  th:replace="~{fragments/navigation :: navigation}"></div>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold">Trouvez la voiture de vos rêves</h1>
+    <p class="lead mt-3">Des milliers d'annonces vérifiées aux meilleurs prix</p>
+    <a th:href="@{/annonces}" class="btn btn-light btn-lg rounded-pill px-4 mt-3">
+      <i class="fas fa-search"></i> Parcourir les annonces
+    </a>
+  </div>
+</section>
+
+<div class="container">
+  <!-- Statistiques -->
+  <div class="row text-center mb-5">
+    <div class="col-md-3">
+      <div class="bg-white p-4 rounded-4 shadow-sm">
+        <i class="fas fa-car fa-3x text-primary"></i>
+        <h3 class="mt-2 fw-bold" th:text="${stats.totalAnnonces}">0</h3>
+        <p class="text-muted">Annonces disponibles</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-white p-4 rounded-4 shadow-sm">
+        <i class="fas fa-users fa-3x text-success"></i>
+        <h3 class="mt-2 fw-bold" th:text="${stats.totalUsers}">0</h3>
+        <p class="text-muted">Clients satisfaits</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-white p-4 rounded-4 shadow-sm">
+        <i class="fas fa-map-marker-alt fa-3x text-warning"></i>
+        <h3 class="mt-2 fw-bold">10+</h3>
+        <p class="text-muted">Villes couvertes</p>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="bg-white p-4 rounded-4 shadow-sm">
+        <i class="fas fa-star fa-3x text-danger"></i>
+        <h3 class="mt-2 fw-bold">98%</h3>
+        <p class="text-muted">Satisfaction client</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dernières annonces -->
+  <h2 class="text-center mb-4">✨ Dernières annonces</h2>
+  <div class="row" th:if="${dernieresAnnonces != null}">
+    <div class="col-md-4 mb-4" th:each="annonce : ${dernieresAnnonces}">
+      <div class="card car-card card-hover h-100">
+        <div class="card-body">
+          <h5 class="card-title" th:text="${annonce.titre}">Titre</h5>
+          <p class="text-muted" th:text="${annonce.vehicule.marque.nom} + ' ' + ${annonce.vehicule.modele.nom} + ' (' + ${annonce.vehicule.annee} + ')'">
+            Marque Modèle Année
+          </p>
+          <p class="price" th:text="${#numbers.formatDecimal(annonce.prix, 0, 0)} + ' MRU'">Prix</p>
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <span class="badge bg-secondary" th:text="${annonce.vehicule.kilometrage} + ' km'">km</span>
+            <span class="badge bg-info" th:text="${annonce.vehicule.carburant}">Carburant</span>
+            <a th:href="@{/annonces/{id}(id=${annonce.id})}" class="btn btn-primary btn-sm rounded-pill">
+              Voir détails <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center mt-4" th:if="${dernieresAnnonces != null}">
+    <a th:href="@{/annonces}" class="btn btn-gradient rounded-pill px-4">Voir toutes les annonces</a>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

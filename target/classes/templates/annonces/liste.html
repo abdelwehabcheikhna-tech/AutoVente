@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+
+<div class="hero-section" style="padding: 30px 0;">
+    <div class="container text-center">
+        <h2 class="fw-bold">🔍 Toutes les annonces</h2>
+        <p>Trouvez la voiture qui vous correspond parmi nos annonces</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Filtres de recherche -->
+    <div class="search-filters">
+        <h5 class="mb-3"><i class="fas fa-filter"></i> Filtres de recherche</h5>
+        <form th:action="@{/annonces}" method="get" class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Marque</label>
+                <select name="marqueId" class="form-select" onchange="loadModeles(this.value, '#modeleId')">
+                    <option value="">-- Toutes --</option>
+                    <option th:each="m : ${marques}" th:value="${m.id}" th:text="${m.nom}"></option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Modèle</label>
+                <select name="modeleId" id="modeleId" class="form-select">
+                    <option value="">-- Tous --</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Prix min (MRU)</label>
+                <input type="number" name="prixMin" class="form-control" placeholder="0" th:value="${param.prixMin}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Prix max (MRU)</label>
+                <input type="number" name="prixMax" class="form-control" placeholder="10000000" th:value="${param.prixMax}">
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">Année min</label>
+                <input type="number" name="anneeMin" class="form-control" placeholder="2000" th:value="${param.anneeMin}">
+            </div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-gradient rounded-pill px-4">
+                    <i class="fas fa-search"></i> Rechercher
+                </button>
+                <a th:href="@{/annonces}" class="btn btn-secondary rounded-pill px-4">Réinitialiser</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des annonces -->
+
+    <div class="row" th:if="${annonces != null and !annonces.isEmpty()}">
+        <div class="col-md-4 mb-4" th:each="annonce : ${annonces}">
+            <div class="card car-card card-hover h-100">
+                <div class="position-relative">
+                    <span class="badge bg-danger position-absolute top-0 end-0 m-2" th:if="${annonce.nombreVues != null}">
+                        <i class="fas fa-eye"></i> <span th:text="${annonce.nombreVues}">0</span>
+                    </span>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${annonce.titre}">Titre</h5>
+                    <p class="text-muted small" th:text="${annonce.vehicule.marque.nom} + ' ' + ${annonce.vehicule.modele.nom} + ' - ' + ${annonce.vehicule.annee}">
+                        Marque Modèle Année
+                    </p>
+                    <p class="price" th:text="${#numbers.formatDecimal(annonce.prix, 0, 0)} + ' MRU'">Prix</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-secondary" th:text="${annonce.vehicule.kilometrage} + ' km'">km</span>
+                        <span class="badge bg-info" th:text="${annonce.vehicule.carburant}">Carburant</span>
+                        <a th:href="@{/annonces/{id}(id=${annonce.id})}" class="btn btn-outline-primary btn-sm rounded-pill">
+                            Détails <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 pb-3">
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i> Postée le <span th:text="${#dates.format(annonce.dateCreation, 'dd/MM/yyyy')}"></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:unless="${annonces != null and annonces.size() > 0}" class="text-center py-5">
+        <i class="fas fa-car fa-4x text-muted mb-3"></i>
+        <p class="lead">Aucune annonce trouvée</p>
+        <a th:href="@{/annonces/nouvelle}" class="btn btn-gradient rounded-pill">Déposer une annonce</a>
+    </div>
+
+    <!-- Pagination -->
+    <nav th:if="${totalPages > 0}" class="mt-4">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/annonces(page=${currentPage - 1}, size=9)}">Précédent</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                class="page-item" th:classappend="${currentPage == i} ? 'active' : ''">
+                <a class="page-link" th:href="@{/annonces(page=${i}, size=9)}" th:text="${i + 1}"></a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                <a class="page-link" th:href="@{/annonces(page=${currentPage + 1}, size=9)}">Suivant</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+</body>
+</html>

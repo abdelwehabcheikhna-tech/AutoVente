@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<div th:fragment="scripts">
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+  <!-- Script personnalisé -->
+  <script>
+    $(document).ready(function() {
+        // Auto-fermeture des messages flash
+        setTimeout(function() {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Confirmation avant suppression
+        $('.btn-delete').on('click', function(e) {
+            if(!confirm('Êtes-vous sûr de vouloir supprimer cet élément ?')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Chargement des modèles par marque
+    function loadModeles(marqueId, selectId) {
+        if(marqueId) {
+            $.get('/api/modeles/by-marque/' + marqueId, function(data) {
+                $(selectId).empty();
+                $(selectId).append('<option value="">-- Sélectionnez un modèle --</option>');
+                $.each(data, function(index, modele) {
+                    $(selectId).append('<option value="' + modele.id + '">' + modele.nom + '</option>');
+                });
+            });
+        }
+    }
+  </script>
+</div>
+</html>

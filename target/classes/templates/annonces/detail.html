@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head}"></head>
+<body>
+<div th:replace="~{fragments/navigation :: navigation}"></div>
+<div class="container mt-4 mb-5">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-custom">
+      <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+      <li class="breadcrumb-item"><a th:href="@{/annonces}">Annonces</a></li>
+      <li class="breadcrumb-item active" th:text="${annonce.titre}">Détail</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Image et infos principales -->
+    <div class="col-md-6 mb-4">
+      <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+        <div class="bg-light text-center p-5">
+          <i class="fas fa-car fa-5x text-secondary"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-body p-4">
+          <h2 class="fw-bold mb-2" th:text="${annonce.titre}">Titre</h2>
+          <p class="text-muted" th:text="${annonce.vehicule.marque.nom} + ' ' + ${annonce.vehicule.modele.nom} + ' - ' + ${annonce.vehicule.annee}">
+            Marque Modèle
+          </p>
+
+          <div class="price mb-3" th:text="${#numbers.formatDecimal(annonce.prix, 0, 0)} + ' MRU'">Prix</div>
+
+          <div class="row mb-4">
+            <div class="col-6">
+              <div class="bg-light p-3 rounded-3 text-center">
+                <i class="fas fa-tachometer-alt fa-2x text-primary"></i>
+                <div class="fw-bold" th:text="${annonce.vehicule.kilometrage} + ' km'">km</div>
+                <small>Kilométrage</small>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="bg-light p-3 rounded-3 text-center">
+                <i class="fas fa-gas-pump fa-2x text-primary"></i>
+                <div class="fw-bold" th:text="${annonce.vehicule.carburant}">Carburant</div>
+                <small>Carburant</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <h6><i class="fas fa-align-left"></i> Description</h6>
+            <p class="text-muted" th:text="${annonce.description}">Description du véhicule...</p>
+          </div>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-gradient rounded-pill py-2" onclick="contacterVendeur()">
+              <i class="fas fa-phone-alt"></i> Contacter le vendeur
+            </button>
+            <a th:href="@{/comparateur}" class="btn btn-outline-secondary rounded-pill py-2">
+              <i class="fas fa-chart-line"></i> Comparer avec d'autres véhicules
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Infos vendeur -->
+      <div class="card shadow-sm border-0 rounded-4 mt-4">
+        <div class="card-body">
+          <h6><i class="fas fa-store"></i> Informations vendeur</h6>
+          <p class="mb-1"><i class="fas fa-user"></i> <span th:text="${annonce.vendeur.nom} + ' ' + ${annonce.vendeur.prenom}">Vendeur</span></p>
+          <p class="mb-1"><i class="fas fa-calendar"></i> Membre depuis <span th:text="${#dates.format(annonce.vendeur.dateInscription, 'dd/MM/yyyy')}">date</span></p>
+          <p><i class="fas fa-star text-warning"></i> Membre vérifié</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Annonces similaires -->
+  <div class="mt-5" th:if="${annoncesSimilaires != null and annoncesSimilaires.size() > 0}">
+    <h4 class="mb-3"><i class="fas fa-car"></i> Annonces similaires</h4>
+    <div class="row">
+      <div class="col-md-3 mb-3" th:each="similaire : ${annoncesSimilaires}">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h6 th:text="${similaire.titre}">Titre</h6>
+            <p class="price small" th:text="${similaire.prix} + ' MRU'">Prix</p>
+            <a th:href="@{/annonces/{id}(id=${similaire.id})}" class="btn btn-sm btn-outline-primary w-100">Voir</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+<div th:replace="~{fragments/scripts :: scripts}"></div>
+
+<script>
+  function contacterVendeur() {
+      alert("Fonctionnalité à venir : Contactez le vendeur");
+  }
+</script>
+
+</body>
+</html>

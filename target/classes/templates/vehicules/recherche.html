@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: head"></head>
+<body>
+
+<div th:replace="fragments/navigation :: navigation"></div>
+
+<div class="container mt-4 mb-5">
+    <!-- Header -->
+    <div class="text-center mb-4">
+        <h2 class="fw-bold"><i class="fas fa-search"></i> Recherche avancée</h2>
+        <p class="text-muted">Affinez votre recherche pour trouver le véhicule idéal</p>
+    </div>
+
+    <!-- Formulaire de recherche -->
+    <div class="card shadow-lg border-0 rounded-4 mb-5">
+        <div class="card-body p-4">
+            <form th:action="@{/recherche}" method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Marque</label>
+                    <select name="marqueId" class="form-select rounded-pill" onchange="loadModeles(this.value, '#modeleId')">
+                        <option value="">-- Toutes --</option>
+                        <option th:each="m : ${marques}" th:value="${m.id}" th:text="${m.nom}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Modèle</label>
+                    <select name="modeleId" id="modeleId" class="form-select rounded-pill">
+                        <option value="">-- Tous --</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Prix min (MRU)</label>
+                    <input type="number" name="prixMin" class="form-control rounded-pill" placeholder="0">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Prix max (MRU)</label>
+                    <input type="number" name="prixMax" class="form-control rounded-pill" placeholder="10 000 000">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Année min</label>
+                    <input type="number" name="anneeMin" class="form-control rounded-pill" placeholder="2000">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Année max</label>
+                    <input type="number" name="anneeMax" class="form-control rounded-pill" placeholder="2025">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Kilométrage max</label>
+                    <input type="number" name="kilometrageMax" class="form-control rounded-pill" placeholder="200 000 km">
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Carburant</label>
+                    <select name="carburant" class="form-select rounded-pill">
+                        <option value="">-- Tous --</option>
+                        <option value="ESSENCE">Essence</option>
+                        <option value="DIESEL">Diesel</option>
+                        <option value="ELECTRIQUE">Électrique</option>
+                        <option value="HYBRIDE">Hybride</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Transmission</label>
+                    <select name="transmission" class="form-select rounded-pill">
+                        <option value="">-- Toutes --</option>
+                        <option value="MANUELLE">Manuelle</option>
+                        <option value="AUTOMATIQUE">Automatique</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-gradient rounded-pill w-100 py-2">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Résultats -->
+    <div th:if="${annonces != null}">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4><i class="fas fa-list"></i> Résultats <span class="badge bg-primary" th:text="${totalItems}">0</span></h4>
+            <div class="btn-group">
+                <button class="btn btn-outline-secondary btn-sm" onclick="toggleGrid()">
+                    <i class="fas fa-th-large"></i> Grille
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="toggleList()">
+                    <i class="fas fa-list"></i> Liste
+                </button>
+            </div>
+        </div>
+
+        <!-- Vue grille -->
+        <div id="gridView" class="row">
+            <div class="col-md-4 mb-4" th:each="annonce : ${annonces}">
+                <div class="card h-100 shadow-sm card-hover">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <h5 class="card-title" th:text="${annonce.titre}">Titre</h5>
+                            <span class="badge bg-success" th:text="${annonce.vehicule.kilometrage} + 'km'"></span>
+                        </div>
+                        <p class="text-muted small" th:text="${annonce.vehicule.marque.nom} + ' ' + ${annonce.vehicule.modele.nom} + ' (' + ${annonce.vehicule.annee} + ')'">
+                            Marque Modèle Année
+                        </p>
+                        <h4 class="price" th:text="${#numbers.formatDecimal(annonce.prix, 0, 0)} + ' MRU'">Prix</h4>
+                        <div class="d-flex gap-2 mb-3">
+                            <span class="badge bg-info" th:text="${annonce.vehicule.carburant}">Carburant</span>
+                            <span class="badge bg-secondary" th:text="${annonce.vehicule.transmission}">Transmission</span>
+                        </div>
+                        <a th:href="@{/annonces/{id}(id=${annonce.id})}" class="btn btn-outline-primary w-100 rounded-pill">
+                            Voir détails <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vue liste (cachée par défaut) -->
+        <div id="listView" class="d-none">
+            <div class="list-group">
+                <div th:each="annonce : ${annonces}" class="list-group-item list-group-item-action mb-2 rounded-3 shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <h5 class="mb-1" th:text="${annonce.titre}">Titre</h5>
+                            <p class="mb-1 text-muted small" th:text="${annonce.vehicule.marque.nom} + ' ' + ${annonce.vehicule.modele.nom} + ' - ' + ${annonce.vehicule.annee}"></p>
+                            <div class="d-flex gap-2 mt-2">
+                                <span class="badge bg-info" th:text="${annonce.vehicule.carburant}">Carburant</span>
+                                <span class="badge bg-secondary" th:text="${annonce.vehicule.kilometrage} + ' km'">km</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <h4 class="price mb-0" th:text="${#numbers.formatDecimal(annonce.prix, 0, 0)} + ' MRU'">Prix</h4>
+                        </div>
+                        <div class="col-md-2 text-end">
+                            <a th:href="@{/annonces/{id}(id=${annonce.id})}" class="btn btn-primary rounded-pill">Voir</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <nav th:if="${totalPages > 0}" class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/recherche(page=${currentPage - 1}, size=9)}">Précédent</a>
+                </li>
+                <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    class="page-item" th:classappend="${currentPage == i} ? 'active' : ''">
+                    <a class="page-link" th:href="@{/recherche(page=${i}, size=9)}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/recherche(page=${currentPage + 1}, size=9)}">Suivant</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div th:if="${annonces == null or annonces.size() == 0}" class="alert alert-info text-center mt-4">
+        <i class="fas fa-info-circle"></i> Aucun résultat trouvé. Essayez d'autres critères de recherche.
+    </div>
+</div>
+
+<div th:replace="fragments/footer :: footer"></div>
+<div th:replace="fragments/scripts :: scripts"></div>
+
+<script>
+    function toggleGrid() {
+        document.getElementById('gridView').classList.remove('d-none');
+        document.getElementById('listView').classList.add('d-none');
+    }
+
+    function toggleList() {
+        document.getElementById('gridView').classList.add('d-none');
+        document.getElementById('listView').classList.remove('d-none');
+    }
+</script>
+
+</body>
+</html>
